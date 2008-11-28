@@ -1,4 +1,4 @@
-# i'm too lazy to figure out how to use setuptools.  lame i know
+# i'm too lazy to figure out how to use distutils/setuptools.  lame i know
 import os,sys
 
 def sh(cmd):
@@ -14,11 +14,7 @@ else:
 
 sh("swig -c++ -module rs_ext -python running_stat.cc")
 sh("cat running_stat.cc running_stat_wrap.cxx  >  everything.cc")
-sh("g++ -O3 -lm %s -lpython2.5 -I/usr/include/python2.5 everything.cc  -o _rs_ext.so" % (linker_flag,))
+sh("g++ -O3 %s -lm -lpython2.5 -I/usr/include/python2.5  everything.cc  -o _rs_ext.so" % (linker_flag,))
 
-#txt = open("running_stat_wrap.cxx").read()
-#txt = '#include "running_stat.cc"' + '\n' + txt
-#f = open("running_stat_wrap.cxx",'w')
-#f.write(txt)
-#f.close()
-#sh("g++ -lm %s -lpython2.5 -I/usr/include/python2.5 running_stat.cc running_stat_wrap.cxx  -o _rs_ext.so" % (linker_flag,))
+# g++ -g running_stat.cc -o main && ./main
+
