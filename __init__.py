@@ -2,14 +2,13 @@
 RunningStat lets you compute running variance and means.  It's nice if you
 don't have access to all the data at once, and takes little memory besides.
  
-var() and std() are alternatives to NumPy's array.var() amd array.std().  They
-are nice for very large arrays because they do not create any intermediate data
-structures, and do a minimum amount of conversion if possible.  Furthermore, at
-least on my machine they are faster than NumPy:
+var() and std() are alternatives to NumPy's var() and std() (though only for
+1d).  They are nice for very large arrays because they do not create any
+intermediate data structures, and do a minimum amount of conversion if
+possible.  Furthermore, at least on my machine they are faster than NumPy:
 
 
 In [1]: from numpy import *
-
 In [2]: x = arange(1e8)                        # python RSIZE = 774 MB
 
 In [3]: timeit -n1 -r5 std(x)                # RSIZE goes as high as 2.2 GB

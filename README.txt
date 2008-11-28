@@ -1,6 +1,9 @@
 running_stat - C++ implementation of calculating running variance/standard
 deviation, plus Python (NumPy) wrappers.
 
+More explanation at
+http://anyall.org/blog/2008/11/calculating-running-variance-in-python-and-c/
+
 See docstring in __init__.py for why it's great for Python.
 
 If you only want the C++, just copy out running_stat.cc (or just the class).
