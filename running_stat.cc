@@ -1,7 +1,7 @@
 // A C++ implementation of running variance/standard deviation (Welford 1962)
 // This follows http://www.johndcook.com/standard_deviation.html
 // By brendan o'connor, anyall.org
-// See main() on bottom for demo how to use
+// See main() on bottom for how to use
 //     % g++ running_stat.cc
 //     % ./a.out
 //     added 0  now mean=0.00 var=0.00 std=0.00
@@ -17,6 +17,11 @@
 
 #include <math.h>
 
+#include <stdio.h>
+#include <iostream>
+using namespace std;
+
+
 class RunningStat {
   public:
     double s;
@@ -26,6 +31,7 @@ class RunningStat {
     bool is_started;
 
     RunningStat() : s(0), m(0), last_m(0), n(0), is_started(false) {}
+
     void add(double x) {
       n++;
       if (!is_started) {
@@ -42,7 +48,6 @@ class RunningStat {
     double var() { return s / n; }
     double std() { return sqrt(var()); }
     double mean() { return m; }
-
 };
 
 
@@ -66,26 +71,23 @@ double running_std(T *x, unsigned int n)
 
 extern "C" {
 
-double running_var_double(double *x, unsigned int n)
+// force template instantiations for C land
+//
+double running_var_double(double *x, unsigned int n) { return running_var(x, n); }
+double running_var_float(float *x, unsigned int n) { return running_var(x, n); }
+double running_var_char(char *x, unsigned int n) { return running_var(x, n); }
+double running_var_uchar(unsigned char *x, unsigned int n) { return running_var(x, n); }
+double running_var_short(short *x, unsigned int n) { return running_var(x, n); }
+double running_var_ushort(unsigned short *x, unsigned int n) { return running_var(x, n); }
+double running_var_long(long *x, unsigned int n) { return running_var(x, n); }
+double running_var_ulong(unsigned long *x, unsigned int n) { return running_var(x, n); }
+
+}
+
+
+
+int main() 
 {
-  return running_var(x, n);
-}
-
-double running_var_float(float *x, unsigned int n)
-{
-  return running_var(x, n);
-}
-
-}
-
-
-
-#include <iostream>
-#include <stdio.h>
-using namespace std;
-
-
-int main() {
   RunningStat rs;
   for (int i=0; i < 10; i++) {
     rs.add(i);
@@ -93,8 +95,6 @@ int main() {
   }
   cout << endl;
 
-  // should get:
-  //
 
   double x[10] = {0,1,2,3,4,5,6,7,8,9};
   cout << running_var(x,10) << endl;
@@ -107,6 +107,7 @@ int main() {
 
   int x3[10] = {0,1,2,3,4,5,6,7,8,9};
   cout << running_var(x3,10) << endl;
+
   return 0;
 }
 
