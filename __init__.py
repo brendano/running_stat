@@ -15,7 +15,7 @@ possible.  Furthermore, at least on my machine they are faster than NumPy:
 
 
 In [1]: from numpy import *
-In [2]: x = arange(1e8)                        # python RSIZE = 774 MB
+In [2]: x = arange(1e8)                      # python RSIZE = 774 MB
 
 In [3]: timeit -n1 -r5 std(x)                # RSIZE goes as high as 2.2 GB
 1 loops, best of 5: 4.01 s per loop
