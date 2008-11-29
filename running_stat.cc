@@ -65,7 +65,7 @@ double running_var(T *x, unsigned int n)
 template <class T>
 double running_std(T *x, unsigned int n)
 {
-  return sqrt(running_var_generic(x,n));
+  return sqrt(running_var(x,n));
 }
 
 
