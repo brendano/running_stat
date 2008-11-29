@@ -1,9 +1,15 @@
 """
 RunningStat lets you compute running variance and means.  It's nice if you
 don't have access to all the data at once, and takes little memory besides.
+
+>>> rs = running_stat.RunningStat()
+>>> for x in xrange(1e6): rs.add(x)
+>>> rs.mean(), rs.var(), rs.std()
+(499999.5, 83333333333.249985, 288675.13459466852)
+
  
-var() and std() are alternatives to NumPy's var() and std() (though only for
-1d).  They are nice for very large arrays because they do not create any
+var() and std() are alternatives to NumPy's var() and std() (though only for 1d
+data).  They are nice for very large arrays because they do not create any
 intermediate data structures, and do a minimum amount of conversion if
 possible.  Furthermore, at least on my machine they are faster than NumPy:
 
@@ -18,6 +24,7 @@ In [4]: import running_stat
 
 In [5]: timeit -n1 -r5 running_stat.std(x)   # RSIZE = 774 MB the whole time
 1 loops, best of 5: 1.66 s per loop
+
 
 questions to brendan o'connor, brenocon@gmail.com, anyall.org
 """
