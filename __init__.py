@@ -42,14 +42,14 @@ EXT = cdll.LoadLibrary(os.path.join(this_dir, '_rs_ext.so'))
 try:
   import numpy as np
   typemap = {
-    np.dtype('double'):  EXT.running_var_double,
-    np.dtype('float32'): EXT.running_var_float,
-    np.dtype('int8'):    EXT.running_var_char,
-    np.dtype('uint8'):   EXT.running_var_uchar,
-    np.dtype('int16'):   EXT.running_var_short,
-    np.dtype('uint16'):  EXT.running_var_ushort,
-    np.dtype('int32'):   EXT.running_var_long,
-    np.dtype('uint32'):  EXT.running_var_ulong,
+    np.dtype('double'):  [EXT.running_mean_double, EXT.running_var_double,],
+    np.dtype('float32'): [EXT.running_mean_float,EXT.running_var_float,],
+    np.dtype('int8'):    [EXT.running_mean_char,EXT.running_var_char,],
+    np.dtype('uint8'):   [EXT.running_mean_uchar,EXT.running_var_uchar],
+    np.dtype('int16'):   [EXT.running_mean_short,EXT.running_var_short],
+    np.dtype('uint16'):  [EXT.running_mean_ushort,EXT.running_var_ushort],
+    np.dtype('int32'):   [EXT.running_mean_long,EXT.running_var_long],
+    np.dtype('uint32'):  [EXT.running_mean_ulong,EXT.running_var_ulong],
   }
   # they dont appear in EXT.__dict__ until you reference them like above
   running_functions = [f for name,f in EXT.__dict__.items() if name.startswith('running_')]
@@ -58,11 +58,16 @@ try:
     f.restype = c_double
 except ImportError: pass
 
+def mean(x):
+  if x.dtype in typemap:
+    return typemap[x.dtype][0](x.ctypes.data, len(x))
+  x = np.double(x)
+  return EXT.running_mean_double(x.ctypes.data, len(x))
 
 def var(x):
   " x is a numpy array "
   if x.dtype in typemap:
-    return typemap[x.dtype](x.ctypes.data, len(x))
+    return typemap[x.dtype][1](x.ctypes.data, len(x))
   x = np.double(x)
   return EXT.running_var_double(x.ctypes.data, len(x))
 

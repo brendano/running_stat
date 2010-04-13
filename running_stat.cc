@@ -28,9 +28,10 @@ class RunningStat {
     double m;
     double last_m;
     unsigned int n;
+    double w;
     bool is_started;
 
-    RunningStat() : s(0), m(0), last_m(0), n(0), is_started(false) {}
+    RunningStat() : s(0), m(0), last_m(0), n(0), w(0), is_started(false) {}
 
     void add(double x) {
       n++;
@@ -45,9 +46,17 @@ class RunningStat {
       }
     }
 
+    void add(double x, double w) {
+      add(x*w);
+      this->w += w;
+    }
+
     double var() { return s / n; }
     double std() { return sqrt(var()); }
-    double mean() { return m; }
+    double mean() { 
+      if (w)  return m / (w/n);
+      return m; 
+    }
 };
 
 
@@ -68,6 +77,14 @@ double running_std(T *x, unsigned int n)
   return sqrt(running_var(x,n));
 }
 
+template <class T>
+double running_mean(T *x, unsigned int n)
+{
+  RunningStat rs;
+  for (int i=0; i < n; i++)
+    rs.add( (double) x[i]);
+  return rs.mean();
+}
 
 extern "C" {
 
@@ -81,6 +98,14 @@ double running_var_short(short *x, unsigned int n) { return running_var(x, n); }
 double running_var_ushort(unsigned short *x, unsigned int n) { return running_var(x, n); }
 double running_var_long(long *x, unsigned int n) { return running_var(x, n); }
 double running_var_ulong(unsigned long *x, unsigned int n) { return running_var(x, n); }
+double running_mean_double(double *x, unsigned int n) { return running_mean(x, n); }
+double running_mean_float(float *x, unsigned int n) { return running_mean(x, n); }
+double running_mean_char(char *x, unsigned int n) { return running_mean(x, n); }
+double running_mean_uchar(unsigned char *x, unsigned int n) { return running_mean(x, n); }
+double running_mean_short(short *x, unsigned int n) { return running_mean(x, n); }
+double running_mean_ushort(unsigned short *x, unsigned int n) { return running_mean(x, n); }
+double running_mean_long(long *x, unsigned int n) { return running_mean(x, n); }
+double running_mean_ulong(unsigned long *x, unsigned int n) { return running_mean(x, n); }
 
 }
 
