@@ -2,7 +2,7 @@
 // This follows http://www.johndcook.com/standard_deviation.html
 // By brendan o'connor, anyall.org
 // See main() on bottom for how to use
-//     % g++ running_stat.cc
+//     % g++ running_stat.cc               ## after editing in the main()
 //     % ./a.out
 //     added 0  now mean=0.00 var=0.00 std=0.00
 //     added 1  now mean=0.50 var=0.25 std=0.50
@@ -24,40 +24,49 @@ using namespace std;
 
 class RunningStat {
   public:
-    double s;
-    double m;
-    double last_m;
-    unsigned int n;
-    double w;
+    double ss;           // (running) sum of square deviations from mean
+    double m;            // (running) mean
+    // double last_m;
+    double n;
+    // unsigned int n;      // number of items seen
+    double totalW;            // weight of items seen
     bool is_started;
 
-    RunningStat() : s(0), m(0), last_m(0), n(0), w(0), is_started(false) {}
+    RunningStat() : ss(0), m(0), n(0), totalW(0), is_started(false) {}
 
     void add(double x) {
-      n++;
-      if (!is_started) {
-        m = x;
-        s = 0;
-        is_started = true;
-      } else {
-        last_m = m;
-        m += (x - m) / n;
-        s += (x - last_m) * (x-m);
-      }
+      add(x,1);
     }
 
     void add(double x, double w) {
-      add(x*w);
-      this->w += w;
+      n++;
+      if (!is_started) {
+        m = x;
+        ss = 0;
+        totalW = w;
+        is_started = true;
+      } else {
+        float tmpW = totalW + w;
+        ss += totalW*w * (x-m)*(x-m) / tmpW;
+        m += (x-m)*w / tmpW;
+        totalW = tmpW;
+      }
     }
 
-    double var() { return s / n; }
-    double std() { return sqrt(var()); }
-    double mean() { 
-      if (w)  return m / (w/n);
-      return m; 
+    double var() const { return ss / totalW; }
+    double sd() const { return sqrt(var()); }
+    double mean() const { 
+      return m;
+      // if (w)  return m / (w/n);
+      // return m; 
     }
 };
+
+ostream& operator<<(ostream& output, const RunningStat& rs) {
+  // output << "mean=" << rs.mean() << "  sd=" << rs.sd() << "  n="<<rs.n;
+  output << "mean=" << rs.mean() << "  sd=" << rs.sd() << "  n="<<rs.n << "  ss=" << rs.ss;
+  return output;  // for multiple << operators.
+}
 
 
 
@@ -72,7 +81,7 @@ double running_var(T *x, unsigned int n)
 }
 
 template <class T>
-double running_std(T *x, unsigned int n)
+double running_sd(T *x, unsigned int n)
 {
   return sqrt(running_var(x,n));
 }
@@ -110,13 +119,40 @@ double running_mean_ulong(unsigned long *x, unsigned int n) { return running_mea
 }
 
 
+#if 0
+int main()
+{
+  RunningStat rs;
+  rs.add(1);
+  rs.add(1);
+  rs.add(2);
+  rs.add(0);
+  rs.add(0);
+  rs.add(0);
+  cout << rs << endl;
+  RunningStat rs2;
+  rs2.add(0);
+  rs2.add(0);
+  rs2.add(0);
+  rs2.add(1,2);
+  rs2.add(2);
+  cout << rs2 << endl;
+  RunningStat rs3;
+  rs3.add(1,2);
+  rs3.add(2);
+  rs3.add(0,3);
+  cout << rs3 << endl;
+}
+#endif
 
+#if 0
 int main() 
 {
   RunningStat rs;
+
   for (int i=0; i < 10; i++) {
     rs.add(i);
-    printf("added %-2d now mean=%.2f var=%.2f std=%.2f\n", i,rs.mean(),rs.var(),rs.std());
+    printf("added %-2d now mean=%.2f var=%.2f sd=%.2f\n", i,rs.mean(),rs.var(),rs.sd());
   }
   cout << endl;
 
@@ -136,3 +172,4 @@ int main()
   return 0;
 }
 
+#endif
