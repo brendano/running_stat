@@ -1,3 +1,7 @@
+Update July-2010: use http://arma.sourceforge.net/docs.html#running_stat instead.
+
+---
+
 running_stat - C++ implementation of calculating running variance/standard
 deviation, plus Python (NumPy) wrappers.
 
